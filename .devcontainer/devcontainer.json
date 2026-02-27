@@ -1,0 +1,15 @@
+{
+  "name": "luthor-ai-systems-framework",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "remoteEnv": {
+    "PATH": "/usr/local/python/3.12.1/bin:${containerEnv:PATH}"
+  },
+  "postCreateCommand": "python -m pip install --upgrade pip && pip install -e '.[dev]'",
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": {
+      "label": "LASF API",
+      "onAutoForward": "openBrowser"
+    }
+  }
+}

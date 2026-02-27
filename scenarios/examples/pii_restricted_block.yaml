@@ -1,0 +1,7 @@
+name: restricted blocks pii
+input_text: "call me at 817-555-1212"
+data_classification: RESTRICTED
+policy_profile: default
+expected:
+  allowed: false
+  violation_codes: ["RESTRICTED_PII_BLOCK"]

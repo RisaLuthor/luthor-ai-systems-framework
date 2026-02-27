@@ -1,0 +1,6 @@
+name: safe example
+input_text: "hello world"
+data_classification: INTERNAL
+policy_profile: default
+expected:
+  allowed: true

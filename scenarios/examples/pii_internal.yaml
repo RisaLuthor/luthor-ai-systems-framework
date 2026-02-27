@@ -1,0 +1,7 @@
+name: pii internal example
+input_text: "email me at test@example.com"
+data_classification: INTERNAL
+policy_profile: default
+expected:
+  allowed: true
+  violation_codes: ["PII_DETECTED"]

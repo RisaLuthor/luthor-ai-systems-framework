@@ -1,0 +1,38 @@
+{
+  "scenario_file": "scenarios/examples/pii_restricted_block.yaml",
+  "pass": true,
+  "allowed": false,
+  "risk_score": 75,
+  "violations": [
+    {
+      "code": "PII_DETECTED",
+      "message": "Detected PII types: PHONE",
+      "severity": "HIGH"
+    },
+    {
+      "code": "RESTRICTED_PII_BLOCK",
+      "message": "Restricted data cannot include PII in output/input.",
+      "severity": "HIGH"
+    }
+  ],
+  "redactions_applied": [
+    "PHONE"
+  ],
+  "sanitized_text": "call me at [REDACTED:PHONE]",
+  "audit_trail": [
+    "classification=RESTRICTED",
+    "policy_profile=default",
+    "pii_detected=PHONE",
+    "decision=blocked (restricted+pii)"
+  ],
+  "checks": [
+    {
+      "name": "allowed",
+      "ok": true
+    },
+    {
+      "name": "violation_codes",
+      "ok": true
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "scenario_file": "scenarios/examples/safe.yaml",
+  "pass": true,
+  "allowed": true,
+  "risk_score": 15,
+  "violations": [],
+  "redactions_applied": [],
+  "sanitized_text": "hello world",
+  "audit_trail": [
+    "classification=INTERNAL",
+    "policy_profile=default",
+    "decision=allowed"
+  ],
+  "checks": [
+    {
+      "name": "allowed",
+      "ok": true
+    }
+  ]
+}

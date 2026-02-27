@@ -2,49 +2,74 @@ from __future__ import annotations
 
 from laf.models import EvaluateRequest, Violation
 from laf.safety.redaction import redact_pii
+from laf.governance.profiles import load_profile
+
+
+def _score(profile: dict, classification: str, findings: list[str]) -> int:
+    weights = profile.get("weights", {})
+    base_map = weights.get("base_by_classification", {})
+    per = weights.get("per_finding", {})
+    base = int(base_map.get(classification, 15))
+
+    risk = base
+    for f in findings:
+        risk += int(per.get(f, 10))
+
+    return max(0, min(100, risk))
+
+
+def _blocked(profile: dict, classification: str, findings: list[str]) -> tuple[bool, str | None]:
+    rules = profile.get("rules", {})
+    block_if = rules.get("block_if", [])
+    finding_set = set(findings)
+
+    for rule in block_if:
+        when = rule.get("when", {})
+        if when.get("data_classification") and when["data_classification"] != classification:
+            continue
+        any_needed = set(when.get("findings_any", []))
+        if any_needed and not (any_needed & finding_set):
+            continue
+        return True, rule.get("reason")
+    return False, None
 
 
 def evaluate(req: EvaluateRequest):
-    """
-    MVP policy evaluation:
-    - Redact common PII patterns
-    - If classification is RESTRICTED and PII found => block
-    - Score risk based on classification + findings
-    """
     audit: list[str] = []
     violations: list[Violation] = []
 
+    profile = load_profile(req.policy_profile)
+    audit.append(f"policy={profile.get('name')}@{profile.get('version')}")
     audit.append(f"classification={req.data_classification}")
-    audit.append(f"policy_profile={req.policy_profile}")
 
     redaction = redact_pii(req.input_text)
-    if redaction.redactions:
-        audit.append(f"pii_detected={','.join(redaction.redactions)}")
+    findings = redaction.findings
+
+    if findings:
+        audit.append(f"findings={','.join(findings)}")
         violations.append(
             Violation(
-                code="PII_DETECTED",
-                message=f"Detected PII types: {', '.join(redaction.redactions)}",
+                code="FINDINGS_DETECTED",
+                message=f"Detected findings: {', '.join(findings)}",
                 severity="MEDIUM" if req.data_classification in ("PUBLIC", "INTERNAL") else "HIGH",
             )
         )
 
-    # Base risk by classification
-    base = {"PUBLIC": 5, "INTERNAL": 15, "CONFIDENTIAL": 35, "RESTRICTED": 55}[req.data_classification]
-    risk = base + (20 * len(redaction.redactions))
+    risk = _score(profile, req.data_classification, findings)
 
-    allowed = True
-    if req.data_classification == "RESTRICTED" and redaction.redactions:
-        allowed = False
-        audit.append("decision=blocked (restricted+pii)")
+    blocked, reason = _blocked(profile, req.data_classification, findings)
+    allowed = not blocked
+
+    if blocked:
+        audit.append("decision=blocked")
         violations.append(
             Violation(
-                code="RESTRICTED_PII_BLOCK",
-                message="Restricted data cannot include PII in output/input.",
+                code="POLICY_BLOCK",
+                message=reason or "Blocked by policy.",
                 severity="HIGH",
             )
         )
     else:
         audit.append("decision=allowed")
 
-    risk = max(0, min(100, risk))
-    return allowed, risk, violations, redaction.redactions, redaction.text, audit
+    return allowed, risk, violations, redaction.redactions_applied, redaction.text, audit

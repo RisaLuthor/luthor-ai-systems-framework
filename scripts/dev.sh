@@ -14,7 +14,7 @@ BASE_PORT="${PORT:-8000}"
 
 pick_port () {
   local p="$1"
-  python - <<PY
+  python - "$p" <<'PY'
 import socket, sys
 p=int(sys.argv[1])
 s=socket.socket()

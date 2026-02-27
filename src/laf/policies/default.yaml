@@ -1,0 +1,18 @@
+name: default
+version: "1.0"
+weights:
+  base_by_classification:
+    PUBLIC: 5
+    INTERNAL: 15
+    CONFIDENTIAL: 35
+    RESTRICTED: 55
+  per_finding:
+    PII_EMAIL: 20
+    PII_PHONE: 20
+    PII_SSN: 30
+rules:
+  block_if:
+    - when:
+        data_classification: RESTRICTED
+        findings_any: ["PII_EMAIL", "PII_PHONE", "PII_SSN"]
+      reason: "Restricted data cannot include PII."

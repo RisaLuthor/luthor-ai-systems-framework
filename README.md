@@ -1,3 +1,5 @@
+![CI](https://github.com/YOUR-USERNAME/luthor-ai-systems-framework/actions/workflows/ci.yml/badge.svg)
+
 # luthor-ai-systems-framework
 
 Deterministic AI governance and safety framework designed for enterprise LLM deployment, policy enforcement, sensitive data control, and audit traceability.

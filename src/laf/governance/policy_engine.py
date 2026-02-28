@@ -19,7 +19,7 @@ def _score(profile: dict, classification: str, findings: list[str]) -> int:
 
 
 def _blocked(profile: dict, classification: str, findings: list[str]) -> tuple[bool, str | None]:
-    rules = profile.get("rules", {})
+    rules = profile.rules or {}
     block_if = rules.get("block_if", [])
     finding_set = set(findings)
 
@@ -39,7 +39,7 @@ def evaluate(req: EvaluateRequest):
     violations: list[Violation] = []
 
     profile = load_profile(req.policy_profile)
-    audit.append(f"policy={profile.get('name')}@{profile.get('version')}")
+    audit.append(f"policy={profile.name}@{profile.version}")
     audit.append(f"classification={req.data_classification}")
 
     redaction = redact_pii(req.input_text)

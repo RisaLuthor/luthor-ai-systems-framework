@@ -1,17 +1,18 @@
 {
-  "run_id": "20260227T054635Z",
+  "run_id": "20260228T074238Z",
   "scenario_count": 3,
   "results": [
     {
       "scenario_file": "scenarios/examples/pii_internal.yaml",
-      "pass": true,
+      "pass": false,
       "allowed": true,
-      "risk_score": 35,
+      "risk_score": 20,
       "violations": [
         {
-          "code": "PII_DETECTED",
-          "message": "Detected PII types: EMAIL",
-          "severity": "MEDIUM"
+          "code": "FINDINGS_DETECTED",
+          "message": "Detected: PII_EMAIL",
+          "severity": "MEDIUM",
+          "rule": "pii"
         }
       ],
       "redactions_applied": [
@@ -19,10 +20,10 @@
       ],
       "sanitized_text": "email me at [REDACTED:EMAIL]",
       "audit_trail": [
-        "classification=INTERNAL",
-        "policy_profile=default",
-        "pii_detected=EMAIL",
-        "decision=allowed"
+        "policy=default@1.0",
+        "redactions=['EMAIL']",
+        "allowed=True",
+        "risk_score=20"
       ],
       "checks": [
         {
@@ -31,25 +32,27 @@
         },
         {
           "name": "violation_codes",
-          "ok": true
+          "ok": false
         }
       ]
     },
     {
       "scenario_file": "scenarios/examples/pii_restricted_block.yaml",
-      "pass": true,
+      "pass": false,
       "allowed": false,
-      "risk_score": 75,
+      "risk_score": 60,
       "violations": [
         {
-          "code": "PII_DETECTED",
-          "message": "Detected PII types: PHONE",
-          "severity": "HIGH"
+          "code": "FINDINGS_DETECTED",
+          "message": "Detected: PII_PHONE",
+          "severity": "MEDIUM",
+          "rule": "pii"
         },
         {
-          "code": "RESTRICTED_PII_BLOCK",
-          "message": "Restricted data cannot include PII in output/input.",
-          "severity": "HIGH"
+          "code": "POLICY_BLOCK",
+          "message": "RESTRICTED data cannot contain PII",
+          "severity": "HIGH",
+          "rule": "classification"
         }
       ],
       "redactions_applied": [
@@ -57,10 +60,10 @@
       ],
       "sanitized_text": "call me at [REDACTED:PHONE]",
       "audit_trail": [
-        "classification=RESTRICTED",
-        "policy_profile=default",
-        "pii_detected=PHONE",
-        "decision=blocked (restricted+pii)"
+        "policy=default@1.0",
+        "redactions=['PHONE']",
+        "allowed=False",
+        "risk_score=60"
       ],
       "checks": [
         {
@@ -69,7 +72,7 @@
         },
         {
           "name": "violation_codes",
-          "ok": true
+          "ok": false
         }
       ]
     },
@@ -77,14 +80,14 @@
       "scenario_file": "scenarios/examples/safe.yaml",
       "pass": true,
       "allowed": true,
-      "risk_score": 15,
+      "risk_score": 0,
       "violations": [],
       "redactions_applied": [],
       "sanitized_text": "hello world",
       "audit_trail": [
-        "classification=INTERNAL",
-        "policy_profile=default",
-        "decision=allowed"
+        "policy=default@1.0",
+        "allowed=True",
+        "risk_score=0"
       ],
       "checks": [
         {

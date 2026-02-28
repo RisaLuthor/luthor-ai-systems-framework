@@ -1,13 +1,14 @@
 {
   "scenario_file": "scenarios/examples/pii_internal.yaml",
-  "pass": true,
+  "pass": false,
   "allowed": true,
-  "risk_score": 35,
+  "risk_score": 20,
   "violations": [
     {
-      "code": "PII_DETECTED",
-      "message": "Detected PII types: EMAIL",
-      "severity": "MEDIUM"
+      "code": "FINDINGS_DETECTED",
+      "message": "Detected: PII_EMAIL",
+      "severity": "MEDIUM",
+      "rule": "pii"
     }
   ],
   "redactions_applied": [
@@ -15,10 +16,10 @@
   ],
   "sanitized_text": "email me at [REDACTED:EMAIL]",
   "audit_trail": [
-    "classification=INTERNAL",
-    "policy_profile=default",
-    "pii_detected=EMAIL",
-    "decision=allowed"
+    "policy=default@1.0",
+    "redactions=['EMAIL']",
+    "allowed=True",
+    "risk_score=20"
   ],
   "checks": [
     {
@@ -27,7 +28,7 @@
     },
     {
       "name": "violation_codes",
-      "ok": true
+      "ok": false
     }
   ]
 }

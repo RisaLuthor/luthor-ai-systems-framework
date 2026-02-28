@@ -1,11 +1,11 @@
 .PHONY: test lint dev
 
 test:
-\tpython -m compileall -q src
-\tpytest -q
+	python -m compileall -q src
+	pytest -q
 
 lint:
-\truff check .
+	ruff check .
 
 dev:
-\t./scripts/dev.sh
+	./scripts/dev.sh

@@ -1,47 +1,57 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
-import importlib.resources as ir
+from typing import Any, Dict
 
 import yaml
 
 
-def _package_policies_dir() -> Path | None:
+@dataclass(frozen=True)
+class PolicyProfile:
+    name: str
+    version: str
+    description: str
+    rules: Dict[str, Any]
+    source_path: str
+
+
+def _repo_root() -> Path:
+    # repo root is 3 up from src/laf/governance/
+    return Path(__file__).resolve().parents[3]
+
+
+def resolve_profile_path(profile: str | None) -> Path:
     """
-    When installed (editable or wheel), policies can be packaged under laf/policies.
-    This returns a real filesystem path when available.
+    profile can be:
+      - None => policies/default.yaml
+      - "default" => policies/default.yaml
+      - "restricted" => policies/restricted.yaml
+      - "policies/custom.yaml" or absolute path
     """
-    try:
-        pkg = ir.files("laf").joinpath("policies")
-        # as_file gives a context manager; but in editable installs this is already a Path-like
-        # We'll try to materialize a path safely.
-        with ir.as_file(pkg) as p:
-            return Path(p)
-    except Exception:
-        return None
+    root = _repo_root()
+    if not profile or profile.strip() == "":
+        return root / "policies" / "default.yaml"
+
+    p = profile.strip()
+    if p.endswith(".yml") or p.endswith(".yaml"):
+        path = Path(p)
+        return path if path.is_absolute() else (root / path)
+
+    # named profile
+    return root / "policies" / f"{p}.yaml"
 
 
-def _repo_policies_dir() -> Path:
-    # src/laf/governance/profiles.py -> src/laf/governance -> src/laf -> src -> repo
-    return Path(__file__).resolve().parents[3] / "policies"
+def load_profile(profile: str | None = None) -> PolicyProfile:
+    path = resolve_profile_path(profile)
+    if not path.exists():
+        raise FileNotFoundError(f"Policy profile not found: {path.as_posix()}")
 
-
-def load_profile(profile_name: str) -> dict[str, Any]:
-    candidates: list[Path] = []
-
-    pkg_dir = _package_policies_dir()
-    if pkg_dir:
-        candidates.append(pkg_dir / f"{profile_name}.yaml")
-
-    candidates.append(_repo_policies_dir() / f"{profile_name}.yaml")
-    candidates.append(Path.cwd() / "policies" / f"{profile_name}.yaml")
-
-    for path in candidates:
-        if path.exists():
-            data = yaml.safe_load(path.read_text())
-            if not isinstance(data, dict) or "name" not in data:
-                raise ValueError(f"Invalid policy profile: {path}")
-            return data
-
-    raise FileNotFoundError(f"Policy profile not found. Tried: {', '.join(str(p) for p in candidates)}")
+    data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return PolicyProfile(
+        name=str(data.get("name", path.stem)),
+        version=str(data.get("version", "0.0")),
+        description=str(data.get("description", "")),
+        rules=dict(data.get("rules", {})),
+        source_path=path.as_posix(),
+    )

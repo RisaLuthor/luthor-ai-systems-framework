@@ -1,0 +1,16 @@
+version: "1.0"
+name: "restricted"
+description: "Stricter policy pack for sensitive contexts"
+
+rules:
+  pii:
+    enabled: true
+    redact: true
+    allow_when_classification: ["PUBLIC"]
+    block_when_classification: ["INTERNAL", "RESTRICTED"]
+  secrets:
+    enabled: true
+    redact: true
+    block_when_classification: ["INTERNAL", "RESTRICTED"]
+  no_sensitive_echo:
+    enabled: true

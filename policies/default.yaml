@@ -1,18 +1,16 @@
-name: default
 version: "1.0"
-weights:
-  base_by_classification:
-    PUBLIC: 5
-    INTERNAL: 15
-    CONFIDENTIAL: 35
-    RESTRICTED: 55
-  per_finding:
-    PII_EMAIL: 20
-    PII_PHONE: 20
-    PII_SSN: 30
+name: "default"
+description: "Baseline enterprise-safe policy pack"
+
 rules:
-  block_if:
-    - when:
-        data_classification: RESTRICTED
-        findings_any: ["PII_EMAIL", "PII_PHONE", "PII_SSN"]
-      reason: "Restricted data cannot include PII."
+  pii:
+    enabled: true
+    redact: true
+    allow_when_classification: ["PUBLIC", "INTERNAL"]
+    block_when_classification: ["RESTRICTED"]
+  secrets:
+    enabled: true
+    redact: true
+    block_when_classification: ["RESTRICTED"]
+  no_sensitive_echo:
+    enabled: true

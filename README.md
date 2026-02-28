@@ -167,3 +167,15 @@ Do we add:
 4️⃣ Architecture diagram image (for visual impact)  
 
 Choose deliberately.
+
+## Releases
+
+### v1.0.0
+- Deterministic policy engine
+- PII detection and redaction
+- Classification-aware enforcement
+- Risk scoring (0–100)
+- Structured violations
+- SQLite audit logging
+- REST + CLI interfaces
+- Full test coverage

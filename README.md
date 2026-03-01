@@ -179,3 +179,7 @@ Choose deliberately.
 - SQLite audit logging
 - REST + CLI interfaces
 - Full test coverage
+
+
+## Releases
+- v0.2.0 — Scenario-driven governance simulation engine (CLI + reports)

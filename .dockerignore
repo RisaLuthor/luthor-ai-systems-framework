@@ -2,12 +2,10 @@
 .github
 __pycache__
 *.pyc
-.venv
-.env
 .pytest_cache
+.venv
 dist
 build
-*.egg-info
 reports
-.vscode
+*.db
 .DS_Store

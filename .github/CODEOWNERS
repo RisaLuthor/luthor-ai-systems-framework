@@ -1,0 +1,7 @@
+# Default owners for everything in the repo
+* @RisaLuthor
+
+# Governance/policy critical paths
+/policies/ @RisaLuthor
+/src/laf/governance/ @RisaLuthor
+/.github/workflows/ @RisaLuthor

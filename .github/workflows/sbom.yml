@@ -1,0 +1,50 @@
+name: SBOM
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  sbom:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies and SBOM tool
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install cyclonedx-bom
+          if [ -f requirements.txt ]; then
+            python -m pip install -r requirements.txt
+          elif [ -f api/requirements.txt ]; then
+            python -m pip install -r api/requirements.txt
+          else
+            echo "No requirements.txt found. Skipping dependency install."
+          fi
+
+      - name: Generate SBOM (CycloneDX)
+        run: |
+          if [ -f requirements.txt ]; then
+            cyclonedx-py requirements -i requirements.txt -o sbom.cdx.json
+          elif [ -f api/requirements.txt ]; then
+            cyclonedx-py requirements -i api/requirements.txt -o sbom.cdx.json
+          else
+            echo "No requirements.txt found. Cannot generate SBOM."
+            exit 1
+          fi
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-cyclonedx
+          path: sbom.cdx.json

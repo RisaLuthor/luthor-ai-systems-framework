@@ -1,0 +1,6 @@
+# Temporary exception: upstream Debian fix not available yet
+# CVE: CVE-2026-0861 (glibc: libc6/libc-bin)
+# Reason: No fixed version published for debian 13.3 base at time of scan
+# Owner: @RisaLuthor
+# Remove-by: 2026-04-01
+CVE-2026-0861

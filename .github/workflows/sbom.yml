@@ -5,12 +5,12 @@ on:
     branches: [ main ]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   sbom:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -20,17 +20,11 @@ jobs:
           python-version: "3.12"
           cache: "pip"
 
-      - name: Install dependencies and SBOM tool
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi
           python -m pip install cyclonedx-bom
-          if [ -f requirements.txt ]; then
-            python -m pip install -r requirements.txt
-          elif [ -f api/requirements.txt ]; then
-            python -m pip install -r api/requirements.txt
-          else
-            echo "No requirements.txt found. Skipping dependency install."
-          fi
 
       - name: Generate SBOM (CycloneDX)
         run: |
@@ -39,7 +33,7 @@ jobs:
           elif [ -f api/requirements.txt ]; then
             cyclonedx-py requirements -i api/requirements.txt -o sbom.cdx.json
           else
-            echo "No requirements.txt found. Cannot generate SBOM."
+            echo "No requirements.txt found (root or api/)."
             exit 1
           fi
 

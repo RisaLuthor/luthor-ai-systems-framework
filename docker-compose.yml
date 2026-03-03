@@ -1,0 +1,7 @@
+services:
+  laf:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONPATH=/app/src

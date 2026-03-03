@@ -1,0 +1,11 @@
+name: internal_email_redaction
+input_text: "email me at test@example.com"
+data_classification: "INTERNAL"
+policy_profile: "default"
+
+expected:
+  allowed: true
+  redactions_applied:
+    - "EMAIL"
+  violations:
+    - "FINDINGS_DETECTED"

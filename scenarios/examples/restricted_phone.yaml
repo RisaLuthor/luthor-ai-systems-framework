@@ -1,0 +1,12 @@
+name: restricted_phone_block
+input_text: "call 817-555-1212"
+data_classification: "RESTRICTED"
+policy_profile: "default"
+
+expected:
+  allowed: false
+  redactions_applied:
+    - "PHONE"
+  violations:
+    - "FINDINGS_DETECTED"
+    - "POLICY_BLOCK"

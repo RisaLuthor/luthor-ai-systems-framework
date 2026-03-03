@@ -1,19 +1,21 @@
 # Security Policy
 
 ## Supported Versions
-This project follows semantic versioning. The `main` branch and the latest release are supported.
+
+The `main` branch is actively maintained and receives security updates.
 
 ## Reporting a Vulnerability
-If you discover a security issue, please do **not** open a public issue.
 
-Instead, report it via GitHub Security Advisories:
-- Go to: **Security** → **Advisories** → **New draft security advisory**
+If you discover a security vulnerability, please report it responsibly:
 
-Include:
-- A clear description of the issue
-- Steps to reproduce (if possible)
-- Impact assessment
-- Suggested fix or mitigation (if you have one)
+- Do NOT open a public issue.
+- Email: risa.luthor@gmail.com
+- Include:
+  - Description of the issue
+  - Steps to reproduce
+  - Impact assessment
+  - Suggested remediation (if known)
 
-## Disclosure Policy
-We aim to acknowledge reports quickly and coordinate a responsible disclosure timeline.
+We will acknowledge receipt within 72 hours and provide a remediation timeline.
+
+Thank you for helping improve the security of this project.

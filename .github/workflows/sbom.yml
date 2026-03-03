@@ -5,11 +5,12 @@ on:
     branches: [ main ]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   sbom:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -27,7 +28,14 @@ jobs:
 
       - name: Generate SBOM (CycloneDX)
         run: |
-          cyclonedx-py requirements --requirements-file requirements.txt --output-file sbom.cdx.json --format json
+          if [ -f requirements.txt ]; then
+            cyclonedx-py requirements -i requirements.txt -o sbom.cdx.json
+          elif [ -f api/requirements.txt ]; then
+            cyclonedx-py requirements -i api/requirements.txt -o sbom.cdx.json
+          else
+            echo "No requirements.txt found (root or api/)."
+            exit 1
+          fi
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
